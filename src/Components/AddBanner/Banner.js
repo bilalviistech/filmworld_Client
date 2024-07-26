@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { Link } from "react-router-dom";
-import companyLogo from '../../assets/images/filmsWorldLogo.jpeg';
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer, toast } from 'react-toastify';
+import SideNavbar from '../SideNav/SideNavbar';
 
 const Banner = () => {
 
@@ -100,37 +99,7 @@ const Banner = () => {
         <span className="loaderr" style={{ position: 'absolute', top: '45%', right: '45%', display: isLoading ? 'block' : 'none' }}></span>
         <div className="container-fluid" style={{opacity: isLoading ? 0.5 : 1}}>
             <div className="row roww">
-                <div className="col-md-3 col-sm-4 text-center" style={{ backgroundColor: "#0a0a0a" }}>
-                    <ul className="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
-                        <a className="d-flex align-items-center justify-content-center title" >
-                            <div>
-                                <img src={companyLogo} alt="BigCo Inc. logo" width={50} height={40} />
-                            </div>
-                            <div>FILMSWORLDPk</div>
-                        </a>
-                        <hr />
-                        <li className="nav-item" style={{marginTop:"20px"}}>
-                            <Link to='/users' className="nav-link">
-                                <i className="fas fa-fw fa-users"></i>
-                                <span>All Users</span></Link>
-                        </li>
-                        <li className="nav-item" style={{marginTop:"20px"}}>
-                            <Link to='/add-movie' className="nav-link" >
-                                <i className="fas fa-file-video"></i>
-                                <span>Add Movie</span></Link>
-                        </li>
-                        <li className="nav-item" style={{marginTop:"20px"}}>
-                            <Link to='/add-banner' className="nav-link">
-                                <i className="fas fa-file-video"></i>
-                                <span>Add Banner</span></Link>
-                        </li>
-
-
-                        <div className="text-center d-none d-md-inline">
-                            <button className="rounded-circle border-0" id="sidebarToggle"></button>
-                        </div>
-                    </ul>
-                </div>
+            <SideNavbar />
 
                 <div className="col-md-9 col-sm-8">
 
