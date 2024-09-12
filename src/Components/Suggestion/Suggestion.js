@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import SideNavbar from '../SideNav/SideNavbar';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
+import { baseURL } from '../../Utils/Utils';
 
 const Suggestion = () => {
     const token = useSelector(state => state.user.token)
@@ -11,7 +12,7 @@ const Suggestion = () => {
         let config = {
             method: 'get',
             maxBodyLength: Infinity,
-            url: 'http://13.51.163.249:3020/api/admin/get-suggestion',
+            url: `${baseURL}api/admin/get-suggestion`,
             headers: {
                 'Authorization': `Bearer ${token}`,
             }

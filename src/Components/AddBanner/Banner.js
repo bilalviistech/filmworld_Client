@@ -3,6 +3,7 @@ import axios from 'axios';
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer, toast } from 'react-toastify';
 import SideNavbar from '../SideNav/SideNavbar';
+import { baseURL } from '../../Utils/Utils';
 
 const Banner = () => {
 
@@ -57,7 +58,7 @@ const Banner = () => {
         formData.append('banner', thumbnailFile);
 
         try {
-            const response = await axios.post('http://13.51.163.249:3020/api/admin/add-banner', formData , {
+            const response = await axios.post(`${baseURL}api/admin/add-banner`, formData , {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 }
@@ -69,7 +70,6 @@ const Banner = () => {
                 setTimeout(() => {
                     window.location.reload();
                 }, 4000);
-                console.log('Your status is: ', response.data.message)
             }
             else{
                 errorNotify(response.data.message)
@@ -78,7 +78,6 @@ const Banner = () => {
                 setTimeout(() => {
                     window.location.reload();
                 }, 4000);
-                console.log('Your status is: ', response.data.message)
             }
 
         } catch (error) {
@@ -88,7 +87,6 @@ const Banner = () => {
             setTimeout(() => {
                 window.location.reload();
             }, 4000);
-            console.log('Error uploading files:', error);
         }
     }
 

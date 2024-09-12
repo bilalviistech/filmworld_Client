@@ -1,16 +1,46 @@
-import React from 'react'
+import React, { useState } from 'react'
+import axios from 'axios';
 import { Link } from "react-router-dom";
 import '../../styles/User.css'
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '../../redux/authSlice';
 import SideNavbar from '../SideNav/SideNavbar';
+import { useEffect } from 'react';
+import { baseURL } from '../../Utils/Utils';
 
 const UserPage = () => {
+
+    const token = useSelector(state => state.user.token)
+
     const Dispatch = useDispatch();
     const handleLogout = ()=>{
         Dispatch(logout())
 
     }
+
+    const [allUsers, setAllUsers] = useState([])
+
+    useEffect(()=>{
+            let config = {
+                method: 'get',
+                maxBodyLength: Infinity,
+                url: `${baseURL}api/user/get-all-user`,
+                headers: { 
+                  'Authorization': `Bearer ${token}`,
+                }
+            };
+              
+            axios.request(config)
+            .then((response) => {
+                console.log(response.data);
+                setAllUsers(response.data.data)
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+        
+    }, [])
+
     return (
         <div className="container-fluid">
             <div className="row roww">
@@ -40,7 +70,7 @@ const UserPage = () => {
                                         Active Users
                                     </div>
                                 </div>
-                                <p className='userCountDiv'>10</p>
+                                <p className='userCountDiv'>{allUsers.length}</p>
                             </div>
                         </div>
                     </div>
@@ -48,34 +78,35 @@ const UserPage = () => {
                         <div className="col-12 mt-5" style={{border:'1px solid black',borderRadius:'10px'}}>
                             <h3 className='text-center' style={{fontFamily:"fantasy"}}>User List</h3>
                             <table className="table userTable table-dark">
-                                <thead>
-                                    <tr>
+                                {
+                                    allUsers.length > 0 ? (
+                                        <>
+                                        <thead>
+                                    <tr className='text-center'>
                                         <th scope="col">ID</th>
                                         <th scope="col">Name</th>
                                         <th scope="col">Email</th>
-                                        <th scope="col">Phone No</th>
                                     </tr>
                                 </thead>
-                                <tbody>
-                                    <tr>
-                                        <th scope="row">1</th>
-                                        <td>ali</td>
-                                        <td>ali@email.com</td>
-                                        <td>123456789</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">2</th>
-                                        <td>bilal</td>
-                                        <td>bilal@email.com</td>
-                                        <td>123456789</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">3</th>
-                                        <td>hamza</td>
-                                        <td>hamza@email.com</td>
-                                        <td>123456789</td>
-                                    </tr>
+                                <tbody className='text-center'>
+                                    {
+                                        allUsers.map((e, i)=>{
+                                            return(
+                                                <tr>
+                                                    <th scope="row">{i+1}</th>
+                                                    <td>{e.name}</td>
+                                                    <td>{e.email}</td>
+                                                </tr>
+                                            )
+                                        })
+                                    }
                                 </tbody>
+                                </>
+                                    ) : (
+                                        <p style={{color:"black", textAlign:"center", fontWeight:700, fontSize:"22px"}}>Loading ...</p>
+                                    )
+                                }
+                                
                             </table>
                         </div>
                     </div>

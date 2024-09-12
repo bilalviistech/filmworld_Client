@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
+import { baseURL } from "../Utils/Utils";
 
 const initialState = {
     msg: "",
@@ -13,7 +14,7 @@ const initialState = {
 
 export const loginUser = createAsyncThunk('LoginUser', async (body) => {
     // const res = await axios.post("https://www.yourappdemo.com/filmworldapp/api/user/login", body, {
-    const res = await axios.post("http://13.51.163.249:3020/api/user/login", body, {
+    const res = await axios.post(`${baseURL}api/user/login`, body, {
         headers: {
             'Content-Type': "application/json",
         }

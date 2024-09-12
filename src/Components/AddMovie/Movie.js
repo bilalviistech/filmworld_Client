@@ -4,6 +4,7 @@ import '../../styles/AddMovie.css';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import SideNavbar from '../SideNav/SideNavbar';
+import { baseURL } from '../../Utils/Utils';
 
 const customToastStyle = {
     background: 'green',
@@ -28,13 +29,10 @@ const customProgressStyleErr = {
 const Movie = () => {
     const [loaderState, setloaderState] = useState(false)
     const [disabledd, setDisabledd] = useState(false)
-    const [status, SetStatus] = useState('')
-    const [videoFile, setVideoFile] = useState(null);
+    const [videoLink, setVideoLink] = useState(null);
     const [thumbnailFile, setThumbnailFile] = useState(null);
     const [movieTitle, setMovieTitle] = useState('');
     const [movieDescription, setMovieDescription] = useState('');
-    const [videoProgress, setVideoProgress] = useState(0);
-    const [progressComplete, setProgressComplete] = useState(false);
     const [selectedCategories, setSelectedCategories] = useState([]);
 
     const handleChange = (event) => {
@@ -50,7 +48,6 @@ const Movie = () => {
             }
         });
     };
-    // console.log('selectedCategories', selectedCategories)
 
     const handleRemoveCategory = (category) => {
         const updatedCategories = selectedCategories.filter(cat => cat !== category);
@@ -78,10 +75,6 @@ const Movie = () => {
         progressClassName: 'toast-progress'
     });
 
-    const handleVideoChange = (e) => {
-        setVideoFile(e.target.files[0]);
-    };
-
     const handleThumbnailChange = (e) => {
         setThumbnailFile(e.target.files[0]);
     };
@@ -90,57 +83,35 @@ const Movie = () => {
         e.preventDefault();
         setloaderState(true)
         setDisabledd(true);
-        setVideoProgress(0);
 
 
         const formData = new FormData();
-        formData.append('video', videoFile);
+        formData.append('movieLink', videoLink);
         formData.append('thumbnail', thumbnailFile);
         formData.append('movieTitle', movieTitle);
         formData.append('movieCategory', JSON.stringify(selectedCategories));
         formData.append('movieDescription', movieDescription);
 
+
         try {
-            const response = await axios.post('http://13.51.163.249:3020/api/admin/add-movie', formData , {
+            const response = await axios.post(`${baseURL}api/admin/add-movie`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
-                // onUploadProgress: (progressEvent) => {
-                //     const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
-                //     setVideoProgress(percentCompleted);
-                // },
-                onUploadProgress: (progressEvent) => {
-                    const { loaded, total } = progressEvent;
-                    const percentCompleted = Math.round((loaded * 100) / total);
-                    console.log('this is total :',total)
-                    // Only update progress if upload is not yet complete
-                    if (percentCompleted < 100) {
-                        console.log('this is total in if condition:',total, ' percentCompleted :',percentCompleted)
-                        setVideoProgress(percentCompleted);
-                        setloaderState(false)
-                    } else {
-                        // Optional: Clear progress when upload is complete
-                        setProgressComplete(true)
-                        setVideoProgress(100);
-                    }
-                },
             });
-            setloaderState(false)
-            //   console.log('Upload successful:', response.data.success);
+
             if (response.data.success === true) {
-                SetStatus(response.data.message)
+                setloaderState(false)
                 notify()
                 setTimeout(() => {
                     window.location.reload();
                 }, 4000);
-                console.log('Your status is: ', response.data.message)
             }
-            else{
+            else {
                 falseNotify()
-                // setTimeout(() => {
-                //     window.location.reload();
-                // }, 4000);
-                console.log('Your status is: ', response.data.message)
+                setTimeout(() => {
+                    window.location.reload();
+                }, 4000);
             }
 
         } catch (error) {
@@ -148,21 +119,19 @@ const Movie = () => {
             setTimeout(() => {
                 window.location.reload();
             }, 4000);
-            console.log('Error uploading files:', error);
         }
     };
 
     return (
         <>
-        {
-            loaderState && (<span className="loaderr" style={{position:'absolute',top:'45%',right:"45%"}}></span>)
-
-        }
+            {
+                loaderState && (<span className="loaderr" style={{ position: 'absolute', top: '45%', right: "45%" }}></span>)
+            }
 
             <ToastContainer />
-            <div className="container-fluid">
+            <div className="container-fluid" style={{ opacity: loaderState ? 0.5 : 1 }}>
                 <div className="row roww">
-                <SideNavbar/>
+                    <SideNavbar />
 
                     <div className="col-md-9 col-sm-8">
 
@@ -428,7 +397,7 @@ const Movie = () => {
 
                                     <div className=" mt-3 ">
                                         <label htmlFor="">Movie Title</label>
-                                        <input type="text" value={movieTitle} onChange={(e) => setMovieTitle(e.target.value)} className='form-control'  required/>
+                                        <input type="text" value={movieTitle} onChange={(e) => setMovieTitle(e.target.value)} className='form-control' placeholder='Enter your movie title' required />
                                     </div>
 
                                     <div className="form-group mt-3 ">
@@ -437,25 +406,23 @@ const Movie = () => {
                                             className='form-control'
                                             value={movieDescription}
                                             onChange={(e) => setMovieDescription(e.target.value)}
+                                            placeholder='Enter your movie description'
+                                            rows="1"
                                             required
                                         />
                                     </div>
                                     <div className="form-group mt-3">
+                                        <label htmlFor="">Movie Link</label>
+                                        <input type="text" onChange={(e) => setVideoLink(e.target.value)} className='form-control' placeholder='Enter your movie link' required />
+                                    </div>
+                                    <div className="form-group mt-3">
                                         <label htmlFor="file">Movie Thubmnai</label>
-                                        <input type="file" onChange={handleThumbnailChange} className='form-control' required/>
+                                        <input type="file" onChange={handleThumbnailChange} className='form-control' required />
                                     </div>
                                     <div className="form-group mt-3">
-                                        <label htmlFor="">Movie File</label>
-                                        <input type="file" onChange={handleVideoChange} className='form-control' required/>
-                                    </div>
-                                    <div className="form-group mt-3">
-                                        <input type="submit" className={disabledd ? 'button-disabled' : 'button'}  disabled={disabledd}/>
+                                        <input type="submit" className={disabledd ? 'button-disabled' : 'button'} disabled={disabledd} />
                                     </div>
                                 </form>
-                                {progressComplete === false && videoProgress > 0 &&
-                                    <p style={{ backgroundColor: "red", borderRadius: "5px", textAlign: "center", color: "whitesmoke" }}>Video Upload Progress: {videoProgress}%</p>}
-                                {progressComplete === true && <p style={{ backgroundColor: "green", borderRadius: "5px", textAlign: "center", color: "whitesmoke", padding: 8 }}>Video uploaded successfully but wait for upload to server. This may take a few seconds or a few minutes. Please wait.</p>}
-
                             </div>
                         </div>
                     </div>
